@@ -36,8 +36,8 @@ export const FeedingRecordForm: React.FC = () => {
 
 
 
-      // 次のスケジュール時刻を取得
-      const nextTimeResponse = await scheduleApi.getNext();
+      // 記録されていない次のスケジュール時刻を取得
+      const nextTimeResponse = await scheduleApi.getNextUnrecorded();
       if (nextTimeResponse.data.nextTime) {
         const now = new Date();
         const today = format(now, 'yyyy-MM-dd');

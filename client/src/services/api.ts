@@ -32,6 +32,7 @@ export const scheduleApi = {
   delete: (id: number) => api.delete(`/feeding-schedules/${id}`),
   toggleActive: (id: number) => api.patch<FeedingSchedule>(`/feeding-schedules/${id}/toggle`),
   getNext: () => api.get<{ nextTime: string | null }>('/feeding-schedules/next'),
+  getNextUnrecorded: () => api.get<{ nextTime: string | null }>('/feeding-schedules/next-unrecorded'),
 };
 
 // 餌やり記録API

@@ -54,6 +54,15 @@ export class FeedingController {
     }
   };
 
+  getNextUnrecordedScheduledTime = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const nextTime = await this.feedingService.getNextUnrecordedScheduledTime();
+      res.json({ nextTime });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   updateSchedule = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { id } = req.params;

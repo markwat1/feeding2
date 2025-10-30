@@ -24,6 +24,7 @@ router.post('/feeds', feedingController.createFeedType);
 router.get('/feeding-schedules', feedingController.getSchedules);
 router.post('/feeding-schedules', feedingController.createSchedule);
 router.get('/feeding-schedules/next', feedingController.getNextScheduledTime);
+router.get('/feeding-schedules/next-unrecorded', feedingController.getNextUnrecordedScheduledTime);
 router.put('/feeding-schedules/:id', feedingController.updateSchedule);
 router.delete('/feeding-schedules/:id', feedingController.deleteSchedule);
 router.patch('/feeding-schedules/:id/toggle', feedingController.toggleScheduleActive);

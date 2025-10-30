@@ -162,4 +162,14 @@ export class FeedingRecordRepository extends BaseRepository {
       } : undefined
     };
   }
+
+  async hasRecordForDateTime(date: string, time: string): Promise<boolean> {
+    const row = await this.db.get<any>(`
+      SELECT COUNT(*) as count
+      FROM feeding_records
+      WHERE DATE(feeding_time) = ? AND TIME(feeding_time) = ?
+    `, [date, time]);
+    
+    return row.count > 0;
+  }
 }

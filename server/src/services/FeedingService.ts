@@ -3,7 +3,7 @@ import { FeedingScheduleRepository } from '../repositories/FeedingScheduleReposi
 import { FeedingRecordRepository } from '../repositories/FeedingRecordRepository';
 import { FeedType, FeedingSchedule, FeedingRecord } from '../types';
 import { AppError } from '../middleware/errorHandler';
-import { format, parse } from 'date-fns';
+import { format } from 'date-fns';
 
 export class FeedingService {
   constructor(
@@ -120,6 +120,75 @@ export class FeedingService {
     }
 
     // 今日のスケジュールがない場合は明日の最初のスケジュール
+    return schedules[0].time;
+  }
+
+  async getNextUnrecordedScheduledTime(): Promise<string | null> {
+    const schedules = await this.scheduleRepo.getActiveSchedules();
+    if (schedules.length === 0) return null;
+
+    const now = new Date();
+    const currentDate = format(now, 'yyyy-MM-dd');
+    const currentTime = format(now, 'HH:mm');
+
+    // 今日のすべてのスケジュールから記録されていないものを探す
+    const todayUnrecordedSchedules: { 
+      time: string; 
+      distance: number; 
+      isFuture: boolean;
+    }[] = [];
+    
+    for (const schedule of schedules) {
+      const hasRecord = await this.recordRepo.hasRecordForDateTime(currentDate, schedule.time + ':00');
+      
+      if (!hasRecord) {
+        // 現在時刻からの距離を計算（分単位）
+        const [scheduleHour, scheduleMinute] = schedule.time.split(':').map(Number);
+        const [currentHour, currentMinute] = currentTime.split(':').map(Number);
+        
+        const scheduleMinutes = scheduleHour * 60 + scheduleMinute;
+        const currentMinutes = currentHour * 60 + currentMinute;
+        const distance = Math.abs(scheduleMinutes - currentMinutes);
+        const isFuture = scheduleMinutes > currentMinutes;
+        
+        todayUnrecordedSchedules.push({
+          time: schedule.time,
+          distance: distance,
+          isFuture: isFuture
+        });
+      }
+    }
+
+    // 今日に記録されていないスケジュールがある場合は、一番近いものを返す
+    if (todayUnrecordedSchedules.length > 0) {
+      // 距離が近い順でソート（過去・未来問わず）
+      todayUnrecordedSchedules.sort((a, b) => {
+        // 距離で比較
+        if (a.distance !== b.distance) {
+          return a.distance - b.distance;
+        }
+        // 距離が同じ場合は未来の時刻を優先
+        if (a.isFuture && !b.isFuture) return -1;
+        if (!a.isFuture && b.isFuture) return 1;
+        return 0;
+      });
+      
+      return todayUnrecordedSchedules[0].time;
+    }
+
+    // 今日に記録されていないスケジュールがない場合は明日の最初の記録されていないスケジュール
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowDate = format(tomorrow, 'yyyy-MM-dd');
+
+    for (const schedule of schedules) {
+      const hasRecord = await this.recordRepo.hasRecordForDateTime(tomorrowDate, schedule.time + ':00');
+      if (!hasRecord) {
+        return schedule.time;
+      }
+    }
+
+    // すべてのスケジュールが記録済みの場合は最初のスケジュールを返す
     return schedules[0].time;
   }
 
