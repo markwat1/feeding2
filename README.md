@@ -106,8 +106,12 @@ npm run client:dev
 
 ### アクセス
 
+**開発環境（npm run dev）:**
 - フロントエンド: http://localhost:3000
 - バックエンド API: http://localhost:3001
+
+**本番環境（npm start）:**
+- アプリケーション: http://localhost:3001
 
 ## 本番環境での起動
 
@@ -129,6 +133,10 @@ NODE_ENV=production npm start
 export NODE_ENV=production
 npm start
 ```
+
+**重要**: 本番環境では http://localhost:3001 にアクセスしてください。
+
+**注意**: 本番環境では、クライアントサーバーは起動せず、サーバーが静的ファイルを配信します。
 
 ## テスト実行
 

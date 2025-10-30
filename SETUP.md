@@ -58,6 +58,23 @@ DB_PATH=./data/pet_care.db
 VITE_API_URL=http://localhost:3001
 ```
 
+## 開発環境と本番環境の違い
+
+### 開発環境（npm run dev）
+
+- **2 つのサーバーが起動**：
+  - フロントエンド: Vite 開発サーバー（ポート 3000）
+  - バックエンド: Express サーバー（ポート 3001）
+- **ホットリロード**: コード変更時に自動更新
+- **デバッグ機能**: 開発者ツールとの連携
+
+### 本番環境（npm start）
+
+- **1 つのサーバーのみ起動**：
+  - Express サーバー（ポート 3001）のみ
+- **静的ファイル配信**: ビルド済み React アプリを配信
+- **最適化**: 圧縮・最適化されたファイルを使用
+
 ## 開発環境での起動
 
 ### 方法 1: 同時起動（推奨）
@@ -82,8 +99,15 @@ npm run client:dev
 
 ### 起動確認
 
+**開発環境（npm run dev）:**
+
 - フロントエンド: http://localhost:3000
 - バックエンド API: http://localhost:3001
+- ヘルスチェック: http://localhost:3001/api/health
+
+**本番環境（npm start）:**
+
+- アプリケーション: http://localhost:3001
 - ヘルスチェック: http://localhost:3001/api/health
 
 ## 本番環境での起動
@@ -97,8 +121,17 @@ npm run build
 ### 2. 本番サーバー起動
 
 ```bash
-npm start
+NODE_ENV=production npm start
 ```
+
+**重要**: 本番環境では、フロントエンドとバックエンドが統合されて **http://localhost:3001** で動作します。
+
+### 本番環境の仕組み
+
+- **クライアントサーバーは起動しません**（これは正常な動作です）
+- サーバーが `client/dist` からビルド済みの静的ファイルを配信
+- 1 つのサーバー（ポート 3001）ですべてを処理
+- フロントエンドの React アプリもサーバーから配信される
 
 ## データベースの初期化
 
@@ -238,6 +271,32 @@ npm install --save-dev @types/express @types/cors @types/node
   }
 }
 ```
+
+### アクセスできない問題
+
+**localhost:3000 にアクセスできない場合:**
+
+```bash
+# 開発環境を起動していることを確認
+npm run dev
+
+# 開発環境では localhost:3000 でフロントエンドにアクセス
+```
+
+**本番環境でアクセスできない場合:**
+
+```bash
+# 本番環境では localhost:3001 にアクセス
+NODE_ENV=production npm start
+
+# ビルドが完了していることを確認
+npm run build
+
+# client/dist ディレクトリが存在することを確認
+ls -la client/dist/
+```
+
+**注意**: 本番環境では、クライアントサーバーは起動しません。これは正常な動作です。
 
 ### データベースエラー
 
