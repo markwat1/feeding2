@@ -7,18 +7,18 @@
 - Node.js 18.0.0 以上
 - npm 9.0.0 以上
 - 最低 1GB の空きディスク容量
-- モダンなWebブラウザ（Chrome, Firefox, Safari, Edge）
+- モダンな Web ブラウザ（Chrome, Firefox, Safari, Edge）
 
 ## 詳細インストール手順
 
-### 1. Node.jsのインストール確認
+### 1. Node.js のインストール確認
 
 ```bash
 node --version
 npm --version
 ```
 
-Node.js 18以上とnpm 9以上がインストールされていることを確認してください。
+Node.js 18 以上と npm 9 以上がインストールされていることを確認してください。
 
 ### 2. プロジェクトのクローンと移動
 
@@ -35,6 +35,7 @@ npm run install:all
 ```
 
 このコマンドは以下を実行します：
+
 - ルートディレクトリの依存関係をインストール
 - サーバー（`server/`）の依存関係をインストール
 - クライアント（`client/`）の依存関係をインストール
@@ -44,6 +45,7 @@ npm run install:all
 環境変数を設定する場合は、以下のファイルを作成してください：
 
 #### server/.env
+
 ```
 PORT=3001
 NODE_ENV=development
@@ -51,13 +53,14 @@ DB_PATH=./data/pet_care.db
 ```
 
 #### client/.env
+
 ```
 VITE_API_URL=http://localhost:3001
 ```
 
 ## 開発環境での起動
 
-### 方法1: 同時起動（推奨）
+### 方法 1: 同時起動（推奨）
 
 ```bash
 npm run dev
@@ -65,7 +68,7 @@ npm run dev
 
 このコマンドでフロントエンドとバックエンドが同時に起動します。
 
-### 方法2: 個別起動
+### 方法 2: 個別起動
 
 別々のターミナルで以下を実行：
 
@@ -73,14 +76,14 @@ npm run dev
 # ターミナル1: バックエンド
 npm run server:dev
 
-# ターミナル2: フロントエンド  
+# ターミナル2: フロントエンド
 npm run client:dev
 ```
 
 ### 起動確認
 
 - フロントエンド: http://localhost:3000
-- バックエンドAPI: http://localhost:3001
+- バックエンド API: http://localhost:3001
 - ヘルスチェック: http://localhost:3001/api/health
 
 ## 本番環境での起動
@@ -99,7 +102,7 @@ npm start
 
 ## データベースの初期化
 
-初回起動時に自動的にSQLiteデータベースが作成されます。
+初回起動時に自動的に SQLite データベースが作成されます。
 
 データベースファイルの場所: `server/data/pet_care.db`
 
@@ -143,9 +146,9 @@ cd client && npm run test:watch
 
 ## 開発ツール
 
-### ESLintとPrettierの設定
+### ESLint と Prettier の設定
 
-コードの品質と整合性を保つため、ESLintとPrettierが設定されています。
+コードの品質と整合性を保つため、ESLint と Prettier が設定されています。
 
 ```bash
 # リンティング実行
@@ -155,7 +158,7 @@ npm run lint
 npm run format
 ```
 
-### VSCode設定（推奨）
+### VSCode 設定（推奨）
 
 `.vscode/settings.json`を作成：
 
@@ -171,6 +174,7 @@ npm run format
 ```
 
 推奨拡張機能：
+
 - ES7+ React/Redux/React-Native snippets
 - Prettier - Code formatter
 - ESLint
@@ -198,11 +202,23 @@ rm package-lock.json server/package-lock.json client/package-lock.json
 npm run install:all
 ```
 
-### TypeScriptエラー
+### TypeScript エラー
 
 ```bash
 # TypeScriptキャッシュクリア
 npx tsc --build --clean
+```
+
+### 型定義エラー（Cannot find module 'express'など）
+
+```bash
+# サーバー側の依存関係を再インストール
+cd server
+rm -rf node_modules package-lock.json
+npm install
+
+# 型定義パッケージが不足している場合
+npm install --save-dev @types/express @types/cors @types/node
 ```
 
 ### データベースエラー
@@ -240,7 +256,7 @@ ANALYZE;
 ### 本番環境での注意点
 
 1. 環境変数の設定
-2. HTTPSの使用
+2. HTTPS の使用
 3. データベースファイルの権限設定
 4. 定期的な依存関係の更新
 
@@ -277,6 +293,7 @@ cp server/data/pet_care_backup_YYYYMMDD.db server/data/pet_care.db
 ### 監視
 
 本番環境では以下の監視を推奨：
+
 - アプリケーションの稼働状況
 - データベースファイルサイズ
 - メモリ使用量
@@ -287,6 +304,6 @@ cp server/data/pet_care_backup_YYYYMMDD.db server/data/pet_care.db
 問題が発生した場合は、以下の情報を含めてお問い合わせください：
 
 1. エラーメッセージ
-2. 実行環境（OS、Node.jsバージョン）
+2. 実行環境（OS、Node.js バージョン）
 3. 実行したコマンド
 4. ログファイルの内容

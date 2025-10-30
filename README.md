@@ -275,15 +275,26 @@ pet-care-tracker/
 6. **TypeScript の型定義エラー（Cannot find module 'express'）**
 
    - サーバー側の依存関係が正しくインストールされていない可能性があります
-   - 以下のコマンドで依存関係を再インストール：
+   - 以下のコマンドで依存関係を完全に再インストール：
      ```bash
      cd server
+     rm -rf node_modules package-lock.json
      npm install
      ```
    - 型定義パッケージが不足している場合：
      ```bash
      cd server
      npm install --save-dev @types/express @types/cors @types/node
+     ```
+   - TypeScript設定の問題の場合、`server/tsconfig.json`に以下が含まれていることを確認：
+     ```json
+     {
+       "compilerOptions": {
+         "types": ["node"],
+         "typeRoots": ["./node_modules/@types"],
+         "moduleResolution": "node"
+       }
+     }
      ```
 
 7. **Express.js のルートエラー（PathError: Missing parameter name）**
