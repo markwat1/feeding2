@@ -69,15 +69,7 @@ export const CalendarView: React.FC = () => {
     return { feeding: dayFeeding, weight: dayWeight, maintenance: dayMaintenance };
   };
 
-  const getFeedingStatus = (feedingRecords: FeedingRecord[]) => {
-    if (feedingRecords.length === 0) return null;
-    const hasConsumed = feedingRecords.some(record => record.consumed === true);
-    const hasNotConsumed = feedingRecords.some(record => record.consumed === false);
-    
-    if (hasConsumed && !hasNotConsumed) return 'consumed';
-    if (hasNotConsumed) return 'not-consumed';
-    return 'unknown';
-  };
+
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);

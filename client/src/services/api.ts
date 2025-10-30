@@ -41,7 +41,7 @@ export const feedingRecordApi = {
     api.get<FeedingRecord[]>('/feeding-records', { params: { startDate, endDate } }),
   create: (feedTypeId: number, feedingTime: string) =>
     api.post<FeedingRecord>('/feeding-records', { feedTypeId, feedingTime }),
-  updateConsumption: (id: number, consumed: boolean) =>
+  updateConsumption: (id: number, consumed: boolean | null) =>
     api.put<FeedingRecord>(`/feeding-records/${id}`, { consumed }),
   update: (id: number, feedTypeId: number, feedingTime: string) =>
     api.patch<FeedingRecord>(`/feeding-records/${id}`, { feedTypeId, feedingTime }),

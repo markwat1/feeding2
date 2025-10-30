@@ -3,7 +3,7 @@ import styles from './Button.module.css';
 
 interface ButtonProps {
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e?: React.FormEvent | React.MouseEvent) => void;
   type?: 'button' | 'submit' | 'reset';
   variant?: 'primary' | 'secondary' | 'danger';
   disabled?: boolean;

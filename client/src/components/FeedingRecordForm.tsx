@@ -57,8 +57,8 @@ export const FeedingRecordForm: React.FC = () => {
     }
   };
 
-  const handleAddFeedType = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAddFeedType = async (e?: React.FormEvent | React.MouseEvent) => {
+    e?.preventDefault();
     if (!newManufacturer.trim() || !newProductName.trim()) return;
 
     try {
