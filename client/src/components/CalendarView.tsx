@@ -236,7 +236,7 @@ export const CalendarView: React.FC = () => {
                         <div 
                           key={record.id}
                           className={styles.maintenanceItem}
-                          title={`${format(new Date(record.performedAt), 'HH:mm')} - ${record.type === 'water_filter' ? '給水器フィルター交換' : 'トイレ砂交換'}${record.notes ? ` (${record.notes})` : ''}`}
+                          title={`${format(new Date(record.performedAt), 'HH:mm')} - ${record.type === 'water_filter' ? '給水器フィルター交換' : 'トイレ砂交換'}${record.notes && record.notes.trim() ? ` (${record.notes.trim()})` : ''}`}
                         >
                           {record.type === 'water_filter' ? 'フィルター' : 'トイレ砂'}
                         </div>
