@@ -2,7 +2,7 @@ import axios from 'axios';
 import { FeedType, FeedingSchedule, FeedingRecord, Pet, WeightRecord, MaintenanceRecord } from '../types';
 
 const api = axios.create({
-  baseURL: 'http://192.168.1.201:3001/api',
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },

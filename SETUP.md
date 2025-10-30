@@ -376,6 +376,297 @@ cp server/data/pet_care_backup_YYYYMMDD.db server/data/pet_care.db
 - メモリ使用量
 - レスポンス時間
 
+## nginx を使用したWebサーバー設定
+
+本番環境でnginxをリバースプロキシとして使用する場合の設定方法です。
+
+### nginx のインストール
+
+#### Ubuntu/Debian
+
+```bash
+sudo apt update
+sudo apt install nginx
+```
+
+#### CentOS/RHEL
+
+```bash
+sudo yum install nginx
+# または
+sudo dnf install nginx
+```
+
+#### macOS
+
+```bash
+brew install nginx
+```
+
+### nginx 設定ファイル
+
+`/etc/nginx/sites-available/pet-care-tracker` を作成：
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;  # 実際のドメイン名に変更
+    
+    # 静的ファイルの配信
+    location / {
+        root /path/to/pet-care-tracker/client/dist;  # 実際のパスに変更
+        try_files $uri $uri/ /index.html;
+        
+        # キャッシュ設定
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+            expires 1y;
+            add_header Cache-Control "public, immutable";
+        }
+    }
+    
+    # API リクエストのプロキシ
+    location /api/ {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+    
+    # gzip圧縮
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types
+        text/plain
+        text/css
+        text/xml
+        text/javascript
+        application/javascript
+        application/xml+rss
+        application/json;
+}
+```
+
+### HTTPS設定（SSL/TLS）
+
+Let's Encryptを使用したSSL証明書の設定：
+
+```bash
+# Certbotのインストール
+sudo apt install certbot python3-certbot-nginx
+
+# SSL証明書の取得と自動設定
+sudo certbot --nginx -d your-domain.com
+```
+
+SSL設定後のnginx設定例：
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name your-domain.com;
+    
+    ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+    
+    # SSL設定
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+    
+    # 静的ファイルの配信
+    location / {
+        root /path/to/pet-care-tracker/client/dist;
+        try_files $uri $uri/ /index.html;
+        
+        # セキュリティヘッダー
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer-when-downgrade" always;
+        add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
+        
+        # キャッシュ設定
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+            expires 1y;
+            add_header Cache-Control "public, immutable";
+        }
+    }
+    
+    # API リクエストのプロキシ
+    location /api/ {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+    
+    # gzip圧縮
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types
+        text/plain
+        text/css
+        text/xml
+        text/javascript
+        application/javascript
+        application/xml+rss
+        application/json;
+}
+```
+
+### nginx設定の有効化
+
+```bash
+# 設定ファイルのシンボリックリンクを作成
+sudo ln -s /etc/nginx/sites-available/pet-care-tracker /etc/nginx/sites-enabled/
+
+# nginx設定のテスト
+sudo nginx -t
+
+# nginxの再起動
+sudo systemctl restart nginx
+
+# nginxの自動起動設定
+sudo systemctl enable nginx
+```
+
+### アプリケーションの起動設定
+
+systemdサービスファイルを作成して、アプリケーションを自動起動：
+
+`/etc/systemd/system/pet-care-tracker.service`：
+
+```ini
+[Unit]
+Description=Pet Care Tracker Application
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/path/to/pet-care-tracker
+Environment=NODE_ENV=production
+Environment=PORT=3001
+ExecStart=/usr/bin/node server/dist/index.js
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+サービスの有効化：
+
+```bash
+# サービスファイルの再読み込み
+sudo systemctl daemon-reload
+
+# サービスの有効化と起動
+sudo systemctl enable pet-care-tracker
+sudo systemctl start pet-care-tracker
+
+# サービス状態の確認
+sudo systemctl status pet-care-tracker
+```
+
+### デプロイ手順
+
+1. **アプリケーションのビルド**：
+   ```bash
+   cd /path/to/pet-care-tracker
+   npm run build
+   ```
+
+2. **nginx設定の更新**：
+   - 上記の設定ファイルを作成
+   - ドメイン名とパスを実際の値に変更
+
+3. **サービスの起動**：
+   ```bash
+   sudo systemctl start pet-care-tracker
+   sudo systemctl restart nginx
+   ```
+
+### nginx設定のトラブルシューティング
+
+#### 設定テスト
+
+```bash
+# nginx設定の構文チェック
+sudo nginx -t
+
+# nginx設定の詳細テスト
+sudo nginx -T
+```
+
+#### ログの確認
+
+```bash
+# nginxエラーログ
+sudo tail -f /var/log/nginx/error.log
+
+# nginxアクセスログ
+sudo tail -f /var/log/nginx/access.log
+
+# アプリケーションログ
+sudo journalctl -u pet-care-tracker -f
+```
+
+#### よくある問題と解決方法
+
+**502 Bad Gateway エラー**：
+- アプリケーションが起動していない
+- ポート3001でリッスンしていない
+
+```bash
+# アプリケーション状態確認
+sudo systemctl status pet-care-tracker
+
+# ポート確認
+sudo netstat -tlnp | grep :3001
+```
+
+**403 Forbidden エラー**：
+- ファイルの権限問題
+- nginxユーザーがファイルにアクセスできない
+
+```bash
+# ファイル権限の確認と修正
+sudo chown -R www-data:www-data /path/to/pet-care-tracker/client/dist
+sudo chmod -R 755 /path/to/pet-care-tracker/client/dist
+```
+
+**静的ファイルが見つからない**：
+- ビルドが完了していない
+- パスが間違っている
+
+```bash
+# ビルドディレクトリの確認
+ls -la /path/to/pet-care-tracker/client/dist/
+
+# 必要に応じて再ビルド
+cd /path/to/pet-care-tracker
+npm run build
+```
+
 ## サポート
 
 問題が発生した場合は、以下の情報を含めてお問い合わせください：
