@@ -290,12 +290,12 @@ pet-care-tracker/
      ```json
      {
        "compilerOptions": {
-         "types": ["node"],
          "typeRoots": ["./node_modules/@types"],
          "moduleResolution": "node"
        }
      }
      ```
+   - `"types": ["node"]`を明示的に指定するとエラーが発生する場合があります。削除して自動検出に任せてください。
 
 7. **Express.js のルートエラー（PathError: Missing parameter name）**
 

@@ -221,6 +221,24 @@ npm install
 npm install --save-dev @types/express @types/cors @types/node
 ```
 
+### TypeScript 型定義ファイルエラー（Cannot find type definition file for 'node'）
+
+```bash
+# tsconfig.jsonの設定を確認
+# "types": ["node"] を削除して自動検出に任せる
+# または以下のように修正：
+```
+
+```json
+{
+  "compilerOptions": {
+    "typeRoots": ["./node_modules/@types"],
+    // "types": ["node"] を削除
+    "moduleResolution": "node"
+  }
+}
+```
+
 ### データベースエラー
 
 ```bash
