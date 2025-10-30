@@ -1,0 +1,153 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.card {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.petList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.petItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background-color: #f9fafb;
+}
+
+.petButton {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+}
+
+.petButton:hover {
+  border-color: #3b82f6;
+}
+
+.petButton.selected {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+  color: #1d4ed8;
+}
+
+.petActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actionButton {
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+}
+
+.editForm {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.editButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editButtons button {
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+}
+
+.weightHistory {
+  margin-top: 2rem;
+}
+
+.recordList {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.recordItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.recordItem:last-child {
+  border-bottom: none;
+}
+
+.date {
+  color: #6b7280;
+}
+
+.weight {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.noData {
+  color: #6b7280;
+  text-align: center;
+  padding: 2rem;
+}
+
+.message {
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.message.success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.message.error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
