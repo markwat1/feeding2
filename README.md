@@ -292,6 +292,44 @@ pet-care-tracker/
    - `app.get('*', ...)` を `app.get('/*', ...)` に変更してください
    - サーバーを再ビルド：`cd server && npm run build`
 
+8. **Qt プラットフォームプラグインエラー（could not connect to display）**
+
+   - このエラーは GUI アプリケーションがヘッドレス環境で実行された場合に発生します
+   - ビルドプロセス中に発生する場合は、package.json のビルドスクリプトが既に修正済みです
+
+   **手動でビルドする場合：**
+
+   ```bash
+   # 環境変数を設定してビルド
+   QT_QPA_PLATFORM=offscreen npm run build
+   ```
+
+   **永続的な解決方法：**
+
+   ```bash
+   # 環境変数をシステムに設定
+   echo 'export QT_QPA_PLATFORM=offscreen' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+   **Docker 環境での実行：**
+
+   ```bash
+   # Dockerfile に以下を追加
+   ENV QT_QPA_PLATFORM=offscreen
+   ENV DISPLAY=:99
+   ```
+
+   **仮想ディスプレイを使用する場合：**
+
+   ```bash
+   # Xvfb をインストール
+   sudo apt-get install xvfb
+
+   # 仮想ディスプレイで実行
+   xvfb-run -a npm run build
+   ```
+
 ## ライセンス
 
 MIT License
