@@ -255,7 +255,7 @@ pet-care-tracker/
 2. **本番環境でのビルドエラー**
 
    - `npm run build`を実行してビルドエラーがないか確認してください
-   - TypeScriptエラーがある場合は修正してから再ビルドしてください
+   - TypeScript エラーがある場合は修正してから再ビルドしてください
 
 3. **データベース接続エラー**
 
@@ -271,6 +271,26 @@ pet-care-tracker/
 
    - `NODE_ENV=production`が設定されていることを確認してください
    - `client/dist`ディレクトリが存在することを確認してください
+
+6. **TypeScript の型定義エラー（Cannot find module 'express'）**
+
+   - サーバー側の依存関係が正しくインストールされていない可能性があります
+   - 以下のコマンドで依存関係を再インストール：
+     ```bash
+     cd server
+     npm install
+     ```
+   - 型定義パッケージが不足している場合：
+     ```bash
+     cd server
+     npm install --save-dev @types/express @types/cors @types/node
+     ```
+
+7. **Express.js のルートエラー（PathError: Missing parameter name）**
+
+   - Express.js の新しいバージョンでルートパターンの問題が発生する場合があります
+   - `app.get('*', ...)` を `app.get('/*', ...)` に変更してください
+   - サーバーを再ビルド：`cd server && npm run build`
 
 ## ライセンス
 

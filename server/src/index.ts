@@ -34,7 +34,7 @@ app.use(errorHandler);
 
 // 本番環境では全てのルートでReactアプリを返す（SPA対応）
 if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
+  app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
   });
 }
