@@ -60,15 +60,16 @@ export const CalendarView: React.FC = () => {
   };
 
   const getDayData = (date: Date) => {
-    const dayFeeding = feedingRecords.filter(record => 
-      isSameDay(new Date(record.feedingTime), date)
-    );
+    const dayFeeding = feedingRecords
+      .filter(record => isSameDay(new Date(record.feedingTime), date))
+      .sort((a, b) => new Date(a.feedingTime).getTime() - new Date(b.feedingTime).getTime());
+    
     const dayWeight = weightRecords.filter(record => 
       isSameDay(new Date(record.measuredDate), date)
     );
-    const dayMaintenance = maintenanceRecords.filter(record => 
-      isSameDay(new Date(record.performedAt), date)
-    );
+    const dayMaintenance = maintenanceRecords
+      .filter(record => isSameDay(new Date(record.performedAt), date))
+      .sort((a, b) => new Date(a.performedAt).getTime() - new Date(b.performedAt).getTime());
 
     return { feeding: dayFeeding, weight: dayWeight, maintenance: dayMaintenance };
   };
