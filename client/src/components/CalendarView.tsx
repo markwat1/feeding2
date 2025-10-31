@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { feedingRecordApi, weightRecordApi, maintenanceApi, feedTypeApi } from '../services/api';
 import { FeedingRecord, WeightRecord, MaintenanceRecord, FeedType } from '../types';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, startOfWeek, endOfWeek, parseISO, formatISO } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, startOfWeek, endOfWeek } from 'date-fns';
 import { Button } from './common/Button';
 import { Input } from './common/Input';
 import { Select } from './common/Select';
