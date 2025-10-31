@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { feedingRecordApi, weightRecordApi, maintenanceApi, feedTypeApi } from '../services/api';
 import { FeedingRecord, WeightRecord, MaintenanceRecord, FeedType } from '../types';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, startOfWeek, endOfWeek } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, startOfWeek, endOfWeek, parseISO, formatISO } from 'date-fns';
 import { Button } from './common/Button';
 import { Input } from './common/Input';
 import { Select } from './common/Select';
@@ -33,8 +33,15 @@ export const CalendarView: React.FC = () => {
       setLoading(true);
       const start = startOfMonth(currentDate);
       const end = endOfMonth(currentDate);
-      const startStr = format(start, 'yyyy-MM-dd');
-      const endStr = format(end, 'yyyy-MM-dd');
+      
+      // JST時間を考慮して、前日の15:00 UTC（JST 00:00）から翌日の14:59 UTC（JST 23:59）まで取得
+      const adjustedStart = new Date(start);
+      adjustedStart.setDate(adjustedStart.getDate() - 1);
+      const adjustedEnd = new Date(end);
+      adjustedEnd.setDate(adjustedEnd.getDate() + 1);
+      
+      const startStr = format(adjustedStart, 'yyyy-MM-dd');
+      const endStr = format(adjustedEnd, 'yyyy-MM-dd');
 
       const [feedingResponse, weightResponse, maintenanceResponse, feedTypesResponse] = await Promise.all([
         feedingRecordApi.getByDateRange(startStr, endStr),
@@ -42,6 +49,18 @@ export const CalendarView: React.FC = () => {
         maintenanceApi.getAll(),
         feedTypes.length === 0 ? feedTypeApi.getAll() : Promise.resolve({ data: feedTypes })
       ]);
+
+      // デバッグ情報を追加
+      console.log('Calendar data loaded:', {
+        dateRange: `${startStr} to ${endStr}`,
+        feedingRecordsCount: feedingResponse.data.length,
+        feedingRecords: feedingResponse.data.map(r => ({
+          id: r.id,
+          feedingTime: r.feedingTime,
+          feedingTimeType: typeof r.feedingTime,
+          feedingTimeString: r.feedingTime.toString()
+        }))
+      });
 
       setFeedingRecords(feedingResponse.data);
       setWeightRecords(weightResponse.data);
@@ -61,7 +80,42 @@ export const CalendarView: React.FC = () => {
 
   const getDayData = (date: Date) => {
     const dayFeeding = feedingRecords
-      .filter(record => isSameDay(new Date(record.feedingTime), date))
+      .filter(record => {
+        // JST（ローカル時間）で日付比較を行う
+        const recordDate = new Date(record.feedingTime.toString());
+        
+        // JST日付で比較するため、ローカル年月日を取得
+        const targetYear = date.getFullYear();
+        const targetMonth = date.getMonth() + 1; // getMonth()は0ベース
+        const targetDay = date.getDate();
+        const targetDateStr = `${targetYear}-${targetMonth.toString().padStart(2, '0')}-${targetDay.toString().padStart(2, '0')}`;
+        
+        const recordYear = recordDate.getFullYear();
+        const recordMonth = recordDate.getMonth() + 1;
+        const recordDay = recordDate.getDate();
+        const recordDateStr = `${recordYear}-${recordMonth.toString().padStart(2, '0')}-${recordDay.toString().padStart(2, '0')}`;
+        
+        const isSame = targetDateStr === recordDateStr;
+        
+        // デバッグ情報を追加（11月1日のみ）
+        if (date.getDate() === 1 && date.getMonth() === 10) {
+          console.log('Debug filtering 11/1 (JST):', {
+            targetDate: date.toISOString(),
+            targetDateStr: targetDateStr,
+            recordDateString: record.feedingTime.toString(),
+            recordDate: recordDate.toISOString(),
+            recordDateStr: recordDateStr,
+            recordJSTHour: recordDate.getHours(),
+            recordJSTMinute: recordDate.getMinutes(),
+            recordUTCHour: recordDate.getUTCHours(),
+            recordUTCMinute: recordDate.getUTCMinutes(),
+            isSame: isSame,
+            record: record
+          });
+        }
+        
+        return isSame;
+      })
       .sort((a, b) => new Date(a.feedingTime).getTime() - new Date(b.feedingTime).getTime());
     
     const dayWeight = weightRecords.filter(record => 

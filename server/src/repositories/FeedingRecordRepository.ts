@@ -38,6 +38,12 @@ export class FeedingRecordRepository extends BaseRepository {
   }
 
   async findByDateRange(startDate: Date, endDate: Date): Promise<FeedingRecord[]> {
+    // 日付範囲を拡張して、タイムゾーンの影響を考慮
+    const startOfDay = new Date(startDate);
+    startOfDay.setUTCHours(0, 0, 0, 0);
+    const endOfDay = new Date(endDate);
+    endOfDay.setUTCHours(23, 59, 59, 999);
+    
     const rows = await this.db.all<any>(`
       SELECT 
         fr.id,
@@ -49,9 +55,9 @@ export class FeedingRecordRepository extends BaseRepository {
         ft.product_name as productName
       FROM feeding_records fr
       LEFT JOIN feed_types ft ON fr.feed_type_id = ft.id
-      WHERE DATE(fr.feeding_time) BETWEEN DATE(?) AND DATE(?)
+      WHERE fr.feeding_time >= ? AND fr.feeding_time <= ?
       ORDER BY fr.feeding_time DESC
-    `, [startDate.toISOString(), endDate.toISOString()]);
+    `, [startOfDay.toISOString(), endOfDay.toISOString()]);
     
     return rows.map(row => ({
       id: row.id,
