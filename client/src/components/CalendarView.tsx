@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { feedingRecordApi, weightRecordApi, maintenanceApi, feedTypeApi } from '../services/api';
 import { FeedingRecord, WeightRecord, MaintenanceRecord, FeedType } from '../types';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, startOfWeek, endOfWeek } from 'date-fns';
 import { Button } from './common/Button';
 import { Input } from './common/Input';
 import { Select } from './common/Select';
@@ -73,7 +73,9 @@ export const CalendarView: React.FC = () => {
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 }); // 日曜日から開始
+  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
+  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
   const previousMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
@@ -193,16 +195,19 @@ export const CalendarView: React.FC = () => {
           <div className={styles.days}>
             {days.map(day => {
               const dayData = getDayData(day);
+              const isCurrentMonth = day.getMonth() === currentDate.getMonth();
               
               return (
                 <div 
                   key={day.toISOString()} 
-                  className={styles.day}
+                  className={`${styles.day} ${
+                    !isCurrentMonth ? styles.otherMonth : ''
+                  }`}
                   onClick={() => handleDayClick(day)}
                 >
                   <div className={styles.dayNumber}>{format(day, 'd')}</div>
                   
-                  {dayData.feeding.length > 0 && (
+                  {isCurrentMonth && dayData.feeding.length > 0 && (
                     <div className={styles.feedingRecords}>
                       {dayData.feeding.map((record) => (
                         <div 
@@ -224,13 +229,13 @@ export const CalendarView: React.FC = () => {
                     </div>
                   )}
                   
-                  {dayData.weight.length > 0 && (
+                  {isCurrentMonth && dayData.weight.length > 0 && (
                     <div className={styles.weightIndicator}>
                       {dayData.weight[0].weight}kg
                     </div>
                   )}
                   
-                  {dayData.maintenance.length > 0 && (
+                  {isCurrentMonth && dayData.maintenance.length > 0 && (
                     <div className={styles.maintenanceIndicator}>
                       {dayData.maintenance.map((record) => (
                         <div 

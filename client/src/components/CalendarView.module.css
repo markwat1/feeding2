@@ -51,8 +51,13 @@
   border-right: 1px solid #e5e7eb;
 }
 
+.weekday:first-child {
+  color: #dc2626; /* 日曜日 - 赤色 */
+}
+
 .weekday:last-child {
   border-right: none;
+  color: #2563eb; /* 土曜日 - 青色 */
 }
 
 .days {
@@ -78,10 +83,39 @@
   border-right: none;
 }
 
+.day.otherMonth {
+  background-color: #f9fafb;
+  opacity: 0.5;
+}
+
+.day.otherMonth .dayNumber {
+  color: #9ca3af;
+}
+
+/* 他の月の日曜日 */
+.day.otherMonth:nth-child(7n+1) .dayNumber {
+  color: #fca5a5; /* 薄い赤色 */
+}
+
+/* 他の月の土曜日 */
+.day.otherMonth:nth-child(7n) .dayNumber {
+  color: #93c5fd; /* 薄い青色 */
+}
+
 .dayNumber {
   font-weight: 600;
   color: #374151;
   margin-bottom: 0.25rem;
+}
+
+/* 日曜日の日付 */
+.day:nth-child(7n+1) .dayNumber {
+  color: #dc2626; /* 赤色 */
+}
+
+/* 土曜日の日付 */
+.day:nth-child(7n) .dayNumber {
+  color: #2563eb; /* 青色 */
 }
 
 .feedingRecords {
