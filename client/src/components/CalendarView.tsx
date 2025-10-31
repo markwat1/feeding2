@@ -15,7 +15,11 @@ export const CalendarView: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [editingRecord, setEditingRecord] = useState<FeedingRecord | null>(null);
+  const [editingRecord, setEditingRecord] = useState<{
+    id: number;
+    feedTypeId: number;
+    feedingTime: string;
+  } | null>(null);
   const [editingMaintenanceRecord, setEditingMaintenanceRecord] = useState<MaintenanceRecord | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [feedTypes, setFeedTypes] = useState<FeedType[]>([]);
@@ -306,10 +310,10 @@ export const CalendarView: React.FC = () => {
                                 <label>時刻</label>
                                 <Input
                                   type="datetime-local"
-                                  value={format(new Date(editingRecord.feedingTime), "yyyy-MM-dd'T'HH:mm")}
+                                  value={editingRecord.feedingTime}
                                   onChange={(value) => setEditingRecord({ 
                                     ...editingRecord, 
-                                    feedingTime: new Date(value)
+                                    feedingTime: value
                                   })}
                                 />
                               </div>
@@ -319,7 +323,7 @@ export const CalendarView: React.FC = () => {
                                 onClick={() => handleUpdateRecord(
                                   editingRecord.id, 
                                   editingRecord.feedTypeId, 
-                                  editingRecord.feedingTime.toISOString()
+                                  editingRecord.feedingTime
                                 )}
                                 disabled={loading}
                               >
@@ -357,7 +361,11 @@ export const CalendarView: React.FC = () => {
                             <div className={styles.recordActions}>
                               <Button
                                 variant="secondary"
-                                onClick={() => setEditingRecord(record)}
+                                onClick={() => setEditingRecord({
+                                  id: record.id,
+                                  feedTypeId: record.feedTypeId,
+                                  feedingTime: format(new Date(record.feedingTime), "yyyy-MM-dd'T'HH:mm")
+                                })}
                                 className={styles.actionButton}
                               >
                                 編集
