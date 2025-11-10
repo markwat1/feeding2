@@ -38,7 +38,7 @@ export interface WeightRecord {
 
 export interface MaintenanceRecord {
   id: number;
-  type: 'water_filter' | 'litter_box';
+  type: 'water_filter' | 'litter_box' | 'nail_clipping';
   performedAt: Date;
   notes?: string;
   createdAt: Date;

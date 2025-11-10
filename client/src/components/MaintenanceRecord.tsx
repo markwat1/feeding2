@@ -12,7 +12,7 @@ export const MaintenanceRecord: React.FC = () => {
   const [notes, setNotes] = useState('');
   const [editingRecord, setEditingRecord] = useState<{
     id: number;
-    type: 'water_filter' | 'litter_box';
+    type: 'water_filter' | 'litter_box' | 'nail_clipping';
     performedAt: string;
     notes: string;
   } | null>(null);
@@ -62,7 +62,22 @@ export const MaintenanceRecord: React.FC = () => {
     }
   };
 
-  const handleUpdateRecord = async (id: number, type: 'water_filter' | 'litter_box', performedAt: string, notes: string) => {
+  const handleNailClippingMaintenance = async () => {
+    try {
+      setLoading(true);
+      await maintenanceApi.createNailClipping(performedAt, notes);
+      await loadRecords();
+      setNotes('');
+      setPerformedAt(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
+      setMessage({ type: 'success', text: '爪切りを記録しました' });
+    } catch (error) {
+      setMessage({ type: 'error', text: '爪切り記録の追加に失敗しました' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateRecord = async (id: number, type: 'water_filter' | 'litter_box' | 'nail_clipping', performedAt: string, notes: string) => {
     try {
       setLoading(true);
       const response = await maintenanceApi.update(id, type, performedAt, notes);
@@ -100,6 +115,8 @@ export const MaintenanceRecord: React.FC = () => {
         return '給水器フィルター交換';
       case 'litter_box':
         return 'トイレ砂交換';
+      case 'nail_clipping':
+        return '爪切り';
       default:
         return type;
     }
@@ -150,9 +167,14 @@ export const MaintenanceRecord: React.FC = () => {
           <Button
             onClick={handleLitterBoxMaintenance}
             disabled={loading || !performedAt}
-            variant="secondary"
           >
             トイレ砂交換
+          </Button>
+          <Button
+            onClick={handleNailClippingMaintenance}
+            disabled={loading || !performedAt}
+          >
+            爪切り
           </Button>
         </div>
       </div>
@@ -175,12 +197,13 @@ export const MaintenanceRecord: React.FC = () => {
                           value={editingRecord.type}
                           onChange={(e) => setEditingRecord({ 
                             ...editingRecord, 
-                            type: e.target.value as 'water_filter' | 'litter_box'
+                            type: e.target.value as 'water_filter' | 'litter_box' | 'nail_clipping'
                           })}
                           className={styles.select}
                         >
                           <option value="water_filter">給水器フィルター交換</option>
                           <option value="litter_box">トイレ砂交換</option>
+                          <option value="nail_clipping">爪切り</option>
                         </select>
                       </div>
                       <div className={styles.fieldGroup}>

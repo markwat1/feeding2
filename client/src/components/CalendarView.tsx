@@ -197,7 +197,7 @@ export const CalendarView: React.FC = () => {
     }
   };
 
-  const handleUpdateMaintenanceRecord = async (id: number, type: 'water_filter' | 'litter_box', performedAt: string, notes?: string) => {
+  const handleUpdateMaintenanceRecord = async (id: number, type: 'water_filter' | 'litter_box' | 'nail_clipping', performedAt: string, notes?: string) => {
     try {
       setLoading(true);
       const response = await maintenanceApi.update(id, type, performedAt, notes);
@@ -215,7 +215,7 @@ export const CalendarView: React.FC = () => {
     const recordToDelete = maintenanceRecords.find(r => r.id === id);
     if (!recordToDelete) return;
     
-    const typeName = recordToDelete.type === 'water_filter' ? '給水器フィルター交換' : 'トイレ砂交換';
+    const typeName = recordToDelete.type === 'water_filter' ? '給水器フィルター交換' : recordToDelete.type === 'litter_box' ? 'トイレ砂交換' : '爪切り';
     if (!confirm(`${format(new Date(recordToDelete.performedAt), 'yyyy/MM/dd HH:mm')}の${typeName}記録を削除しますか？`)) return;
 
     try {
@@ -300,9 +300,9 @@ export const CalendarView: React.FC = () => {
                         <div 
                           key={record.id}
                           className={styles.maintenanceItem}
-                          title={`${format(new Date(record.performedAt), 'HH:mm')} - ${record.type === 'water_filter' ? '給水器フィルター交換' : 'トイレ砂交換'}${record.notes && record.notes.trim() ? ` (${record.notes.trim()})` : ''}`}
+                          title={`${format(new Date(record.performedAt), 'HH:mm')} - ${record.type === 'water_filter' ? '給水器フィルター交換' : record.type === 'litter_box' ? 'トイレ砂交換' : '爪切り'}${record.notes && record.notes.trim() ? ` (${record.notes.trim()})` : ''}`}
                         >
-                          {record.type === 'water_filter' ? 'フィルター' : 'トイレ砂'}
+                          {record.type === 'water_filter' ? 'フィルター' : record.type === 'litter_box' ? 'トイレ砂' : '爪切り'}
                         </div>
                       ))}
                     </div>
@@ -469,11 +469,12 @@ export const CalendarView: React.FC = () => {
                                   value={editingMaintenanceRecord.type}
                                   onChange={(value) => setEditingMaintenanceRecord({ 
                                     ...editingMaintenanceRecord, 
-                                    type: value as 'water_filter' | 'litter_box'
+                                    type: value as 'water_filter' | 'litter_box' | 'nail_clipping'
                                   })}
                                   options={[
                                     { value: 'water_filter', label: '給水器フィルター交換' },
-                                    { value: 'litter_box', label: 'トイレ砂交換' }
+                                    { value: 'litter_box', label: 'トイレ砂交換' },
+                                    { value: 'nail_clipping', label: '爪切り' }
                                   ]}
                                 />
                               </div>
@@ -528,7 +529,7 @@ export const CalendarView: React.FC = () => {
                                 {format(new Date(record.performedAt), 'HH:mm')}
                               </div>
                               <div className={styles.maintenanceType}>
-                                {record.type === 'water_filter' ? '給水器フィルター交換' : 'トイレ砂交換'}
+                                {record.type === 'water_filter' ? '給水器フィルター交換' : record.type === 'litter_box' ? 'トイレ砂交換' : '爪切り'}
                               </div>
                               {record.notes && (
                                 <div className={styles.maintenanceNotes}>

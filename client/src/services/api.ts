@@ -72,13 +72,15 @@ export const weightRecordApi = {
 // メンテナンスAPI
 export const maintenanceApi = {
   getAll: () => api.get<MaintenanceRecord[]>('/maintenance'),
-  getByType: (type: 'water_filter' | 'litter_box') =>
+  getByType: (type: 'water_filter' | 'litter_box' | 'nail_clipping') =>
     api.get<MaintenanceRecord[]>('/maintenance', { params: { type } }),
   createWaterFilter: (performedAt: string, notes?: string) =>
     api.post<MaintenanceRecord>('/maintenance/water-filter', { performedAt, notes }),
   createLitterBox: (performedAt: string, notes?: string) =>
     api.post<MaintenanceRecord>('/maintenance/litter-box', { performedAt, notes }),
-  update: (id: number, type: 'water_filter' | 'litter_box', performedAt: string, notes?: string) =>
+  createNailClipping: (performedAt: string, notes?: string) =>
+    api.post<MaintenanceRecord>('/maintenance/nail-clipping', { performedAt, notes }),
+  update: (id: number, type: 'water_filter' | 'litter_box' | 'nail_clipping', performedAt: string, notes?: string) =>
     api.put<MaintenanceRecord>(`/maintenance/${id}`, { type, performedAt, notes }),
   delete: (id: number) => api.delete(`/maintenance/${id}`),
 };
