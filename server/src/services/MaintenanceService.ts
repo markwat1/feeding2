@@ -9,7 +9,7 @@ export class MaintenanceService {
     return this.maintenanceRepo.getAllRecords();
   }
 
-  async getRecordsByType(type: 'water_filter' | 'litter_box'): Promise<MaintenanceRecord[]> {
+  async getRecordsByType(type: 'water_filter' | 'litter_box' | 'nail_clipping'): Promise<MaintenanceRecord[]> {
     return this.maintenanceRepo.getRecordsByType(type);
   }
 
@@ -21,7 +21,11 @@ export class MaintenanceService {
     return this.createRecord('litter_box', performedAt, notes);
   }
 
-  private async createRecord(type: 'water_filter' | 'litter_box', performedAt: Date, notes?: string): Promise<MaintenanceRecord> {
+  async createNailClippingRecord(performedAt: Date, notes?: string): Promise<MaintenanceRecord> {
+    return this.createRecord('nail_clipping', performedAt, notes);
+  }
+
+  private async createRecord(type: 'water_filter' | 'litter_box' | 'nail_clipping', performedAt: Date, notes?: string): Promise<MaintenanceRecord> {
     // 実施日が未来でないことを確認
     const now = new Date();
     if (performedAt > now) {
@@ -39,7 +43,7 @@ export class MaintenanceService {
     return created;
   }
 
-  async updateRecord(id: number, type: 'water_filter' | 'litter_box', performedAt: Date, notes?: string): Promise<MaintenanceRecord> {
+  async updateRecord(id: number, type: 'water_filter' | 'litter_box' | 'nail_clipping', performedAt: Date, notes?: string): Promise<MaintenanceRecord> {
     // 実施日が未来でないことを確認
     const now = new Date();
     if (performedAt > now) {

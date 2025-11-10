@@ -16,6 +16,7 @@ const maintenanceController = new MaintenanceController(maintenanceService);
 router.get('/maintenance', maintenanceController.getRecords);
 router.post('/maintenance/water-filter', maintenanceController.createWaterFilterRecord);
 router.post('/maintenance/litter-box', maintenanceController.createLitterBoxRecord);
+router.post('/maintenance/nail-clipping', maintenanceController.createNailClippingRecord);
 router.put('/maintenance/:id', maintenanceController.updateRecord);
 router.delete('/maintenance/:id', maintenanceController.deleteRecord);
 

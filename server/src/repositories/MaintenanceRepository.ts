@@ -18,7 +18,7 @@ export class MaintenanceRepository extends BaseRepository {
     }));
   }
 
-  async getRecordsByType(type: 'water_filter' | 'litter_box'): Promise<MaintenanceRecord[]> {
+  async getRecordsByType(type: 'water_filter' | 'litter_box' | 'nail_clipping'): Promise<MaintenanceRecord[]> {
     const rows = await this.db.all<any>(
       'SELECT id, type, performed_at as performedAt, notes, created_at as createdAt FROM maintenance_records WHERE type = ? ORDER BY performed_at DESC',
       [type]
@@ -30,7 +30,7 @@ export class MaintenanceRepository extends BaseRepository {
     }));
   }
 
-  async createRecord(type: 'water_filter' | 'litter_box', performedAt: Date, notes?: string): Promise<number> {
+  async createRecord(type: 'water_filter' | 'litter_box' | 'nail_clipping', performedAt: Date, notes?: string): Promise<number> {
     const result = await this.db.run(
       'INSERT INTO maintenance_records (type, performed_at, notes) VALUES (?, ?, ?)',
       [type, performedAt.toISOString(), notes || null]
@@ -38,7 +38,7 @@ export class MaintenanceRepository extends BaseRepository {
     return result.lastID!;
   }
 
-  async updateRecord(id: number, type: 'water_filter' | 'litter_box', performedAt: Date, notes?: string): Promise<void> {
+  async updateRecord(id: number, type: 'water_filter' | 'litter_box' | 'nail_clipping', performedAt: Date, notes?: string): Promise<void> {
     await this.db.run(
       'UPDATE maintenance_records SET type = ?, performed_at = ?, notes = ? WHERE id = ?',
       [type, performedAt.toISOString(), notes || null, id]

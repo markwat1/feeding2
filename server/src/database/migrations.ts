@@ -55,15 +55,45 @@ export const runMigrations = async (db: Database): Promise<void> => {
   `);
 
   // メンテナンス記録テーブル
-  await db.run(`
-    CREATE TABLE IF NOT EXISTS maintenance_records (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      type VARCHAR(20) NOT NULL CHECK (type IN ('water_filter', 'litter_box')),
-      performed_at DATETIME NOT NULL,
-      notes TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
+  // 既存のテーブルをチェック
+  const tableInfo = await db.all(`PRAGMA table_info(maintenance_records)`);
+  
+  if (tableInfo.length > 0) {
+    // テーブルが存在する場合、CHECK制約を更新するために再作成
+    // まず、既存のデータを一時テーブルに保存
+    await db.run(`
+      CREATE TABLE IF NOT EXISTS maintenance_records_temp (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        type VARCHAR(20) NOT NULL CHECK (type IN ('water_filter', 'litter_box', 'nail_clipping')),
+        performed_at DATETIME NOT NULL,
+        notes TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // 既存のデータをコピー
+    await db.run(`
+      INSERT INTO maintenance_records_temp (id, type, performed_at, notes, created_at)
+      SELECT id, type, performed_at, notes, created_at FROM maintenance_records
+    `);
+    
+    // 古いテーブルを削除
+    await db.run(`DROP TABLE maintenance_records`);
+    
+    // 新しいテーブルをリネーム
+    await db.run(`ALTER TABLE maintenance_records_temp RENAME TO maintenance_records`);
+  } else {
+    // テーブルが存在しない場合は新規作成
+    await db.run(`
+      CREATE TABLE maintenance_records (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        type VARCHAR(20) NOT NULL CHECK (type IN ('water_filter', 'litter_box', 'nail_clipping')),
+        performed_at DATETIME NOT NULL,
+        notes TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+  }
 
   // インデックスの作成
   await db.run(`CREATE INDEX IF NOT EXISTS idx_feeding_records_time ON feeding_records(feeding_time)`);

@@ -67,6 +67,7 @@ graph TB
 
 - 給水器フィルター交換記録
 - トイレ砂交換記録
+- 爪切り記録
 
 ### バックエンド API
 
@@ -97,9 +98,10 @@ POST /api/pets/:id/weights - 体重記録作成
 #### メンテナンス API
 
 ```typescript
-GET / api / maintenance - メンテナンス記録取得;
-POST / api / maintenance / water - filter - 給水器フィルター交換記録;
-POST / api / maintenance / litter - box - トイレ砂交換記録;
+GET /api/maintenance - メンテナンス記録取得
+POST /api/maintenance/water-filter - 給水器フィルター交換記録
+POST /api/maintenance/litter-box - トイレ砂交換記録
+POST /api/maintenance/nail-clipping - 爪切り記録
 ```
 
 ## データモデル
@@ -153,7 +155,7 @@ CREATE TABLE weight_records (
 -- メンテナンス記録
 CREATE TABLE maintenance_records (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    type ENUM('water_filter', 'litter_box') NOT NULL,
+    type ENUM('water_filter', 'litter_box', 'nail_clipping') NOT NULL,
     performed_at DATETIME NOT NULL,
     notes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -203,7 +205,7 @@ interface WeightRecord {
 
 interface MaintenanceRecord {
   id: number;
-  type: 'water_filter' | 'litter_box';
+  type: 'water_filter' | 'litter_box' | 'nail_clipping';
   performedAt: Date;
   notes?: string;
   createdAt: Date;

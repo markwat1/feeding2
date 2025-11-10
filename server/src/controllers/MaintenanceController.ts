@@ -10,8 +10,8 @@ export class MaintenanceController {
       const { type } = req.query;
       
       let records;
-      if (type && (type === 'water_filter' || type === 'litter_box')) {
-        records = await this.maintenanceService.getRecordsByType(type);
+      if (type && (type === 'water_filter' || type === 'litter_box' || type === 'nail_clipping')) {
+        records = await this.maintenanceService.getRecordsByType(type as 'water_filter' | 'litter_box' | 'nail_clipping');
       } else {
         records = await this.maintenanceService.getAllRecords();
       }
@@ -49,6 +49,24 @@ export class MaintenanceController {
       }
 
       const record = await this.maintenanceService.createLitterBoxRecord(
+        new Date(performedAt),
+        notes
+      );
+      res.status(201).json(record);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  createNailClippingRecord = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { performedAt, notes } = req.body;
+      
+      if (!performedAt) {
+        throw new AppError('Performed date is required', 400, 'VALIDATION_ERROR');
+      }
+
+      const record = await this.maintenanceService.createNailClippingRecord(
         new Date(performedAt),
         notes
       );

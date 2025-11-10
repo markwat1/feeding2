@@ -15,6 +15,7 @@
 - **Maintenance_Record**: メンテナンス記録
 - **Water_Filter**: 給水器フィルター
 - **Litter_Box**: トイレ砂
+- **Nail_Clipping**: 爪切り
 
 ## 要件
 
@@ -99,14 +100,15 @@
 
 ### 要件6
 
-**ユーザーストーリー:** ペット飼い主として、給水器とトイレのメンテナンス履歴を記録したい。これにより、適切なメンテナンススケジュールを管理できる。
+**ユーザーストーリー:** ペット飼い主として、給水器、トイレ、爪切りのメンテナンス履歴を記録したい。これにより、適切なメンテナンススケジュールを管理できる。
 
 #### 受入基準
 
 1. THE Pet_Care_System SHALL 給水器フィルター交換の記録機能を提供する
 2. THE Pet_Care_System SHALL トイレ砂交換の記録機能を提供する
-3. THE Pet_Care_System SHALL メンテナンス記録に実施日時を含める
-4. THE Pet_Care_System SHALL メンテナンス履歴を表示する機能を提供する
+3. THE Pet_Care_System SHALL 爪切りの記録機能を提供する
+4. THE Pet_Care_System SHALL メンテナンス記録に実施日時を含める
+5. THE Pet_Care_System SHALL メンテナンス履歴を表示する機能を提供する
 
 ### 要件7
 
