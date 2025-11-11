@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from './common/Button';
 import { Input } from './common/Input';
+import { WeightChart } from './common/WeightChart';
+import { PeriodSelector, TimePeriod } from './common/PeriodSelector';
 import { petApi, weightRecordApi } from '../services/api';
 import { Pet, WeightRecord } from '../types';
 import { format } from 'date-fns';
+import { filterWeightRecordsByPeriod } from '../utils/dateUtils';
 import styles from './PetManagement.module.css';
 
 export const PetManagement: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>([]);
   const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   const [weightRecords, setWeightRecords] = useState<WeightRecord[]>([]);
+  const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('6months');
+  const [chartLoading, setChartLoading] = useState(false);
   const [newPetName, setNewPetName] = useState('');
   const [newWeight, setNewWeight] = useState('');
   const [measureDate, setMeasureDate] = useState(format(new Date(), 'yyyy-MM-dd'));
@@ -26,6 +31,16 @@ export const PetManagement: React.FC = () => {
       loadWeightRecords(selectedPet.id);
     }
   }, [selectedPet]);
+
+  // Handle period change for chart
+  const handlePeriodChange = (period: TimePeriod) => {
+    setSelectedPeriod(period);
+  };
+
+  // Get filtered weight records for chart
+  const getFilteredWeightRecords = (): WeightRecord[] => {
+    return filterWeightRecordsByPeriod(weightRecords, selectedPeriod);
+  };
 
   const loadPets = async () => {
     try {
@@ -272,6 +287,21 @@ export const PetManagement: React.FC = () => {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* 体重グラフ */}
+          <div className={styles.weightChart}>
+            <h4>体重推移グラフ</h4>
+            <PeriodSelector
+              selectedPeriod={selectedPeriod}
+              onPeriodChange={handlePeriodChange}
+              disabled={loading || chartLoading}
+            />
+            <WeightChart
+              weightRecords={getFilteredWeightRecords()}
+              petName={selectedPet.name}
+              loading={chartLoading}
+            />
           </div>
         </div>
       )}

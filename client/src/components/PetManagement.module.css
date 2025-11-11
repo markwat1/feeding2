@@ -151,3 +151,44 @@
   color: #991b1b;
   border: 1px solid #fca5a5;
 }
+
+.weightChart {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.weightChart h4 {
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .petItem {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .petActions {
+    justify-content: center;
+  }
+  
+  .editForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .editButtons {
+    justify-content: center;
+  }
+}
