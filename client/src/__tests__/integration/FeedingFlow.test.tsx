@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { FeedingRecordForm } from '../../components/FeedingRecordForm';
-import { CalendarView } from '../../components/CalendarView';
 import { feedTypeApi, scheduleApi, feedingRecordApi } from '../../services/api';
 
 // Mock the API modules
@@ -36,14 +35,6 @@ const renderFeedingForm = () => {
   return render(
     <BrowserRouter>
       <FeedingRecordForm />
-    </BrowserRouter>
-  );
-};
-
-const renderCalendar = () => {
-  return render(
-    <BrowserRouter>
-      <CalendarView />
     </BrowserRouter>
   );
 };
