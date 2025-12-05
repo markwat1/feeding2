@@ -48,6 +48,9 @@
 
 1. WHEN 餌やり記録画面を開く時、IF 前回の餌の摂食記録が未登録の場合、THEN THE Pet_Care_System SHALL 前回の摂食状況の登録フォームを表示する
 2. THE Pet_Care_System SHALL 餌の摂食状況を「食べきった」または「残した」として記録する機能を提供する
+3. THE Pet_Care_System SHALL 摂食状況を2つのボタン（「食べきった」ボタンと「残した」ボタン）で直接記録可能にする
+4. WHEN ユーザーが「食べきった」ボタンをクリックする時、THE Pet_Care_System SHALL 前回の餌やり記録の摂食状況を「食べきった」として即座に記録する
+5. WHEN ユーザーが「残した」ボタンをクリックする時、THE Pet_Care_System SHALL 前回の餌やり記録の摂食状況を「残した」として即座に記録する
 
 ### 要件4
 

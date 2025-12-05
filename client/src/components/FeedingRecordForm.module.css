@@ -31,6 +31,35 @@
   background-color: #fffbeb;
 }
 
+.consumptionButtons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.consumedButton {
+  flex: 1;
+  background-color: #10b981;
+  border-color: #10b981;
+}
+
+.consumedButton:hover:not(:disabled) {
+  background-color: #059669;
+  border-color: #059669;
+}
+
+.leftoverButton {
+  flex: 1;
+  background-color: #f59e0b;
+  border-color: #f59e0b;
+  color: white;
+}
+
+.leftoverButton:hover:not(:disabled) {
+  background-color: #d97706;
+  border-color: #d97706;
+}
+
 .formGroup {
   margin-bottom: 1.5rem;
 }

@@ -13,7 +13,6 @@ export const FeedingRecordForm: React.FC = () => {
   const [selectedFeedType, setSelectedFeedType] = useState<string>('');
   const [feedingTime, setFeedingTime] = useState<string>('');
   const [unconsumedRecord, setUnconsumedRecord] = useState<FeedingRecord | null>(null);
-  const [previousConsumption, setPreviousConsumption] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -76,17 +75,16 @@ export const FeedingRecordForm: React.FC = () => {
     }
   };
 
-  const handleUpdatePreviousConsumption = async () => {
-    if (!unconsumedRecord || !previousConsumption) return;
+  const handleUpdatePreviousConsumption = async (consumed: boolean) => {
+    if (!unconsumedRecord) return;
 
     try {
       setLoading(true);
       await feedingRecordApi.updateConsumption(
         unconsumedRecord.id,
-        previousConsumption === 'true'
+        consumed
       );
       setUnconsumedRecord(null);
-      setPreviousConsumption('');
       setMessage({ type: 'success', text: '前回の摂食状況を記録しました' });
     } catch (error) {
       setMessage({ type: 'error', text: '摂食状況の更新に失敗しました' });
@@ -145,23 +143,23 @@ export const FeedingRecordForm: React.FC = () => {
             {format(new Date(unconsumedRecord.feedingTime), 'yyyy/MM/dd HH:mm')} - {' '}
             {unconsumedRecord.feedType?.manufacturer} {unconsumedRecord.feedType?.productName}
           </p>
-          <div className={styles.formGroup}>
-            <Select
-              value={previousConsumption}
-              onChange={setPreviousConsumption}
-              options={[
-                { value: 'true', label: '食べきった' },
-                { value: 'false', label: '残した' }
-              ]}
-              placeholder="摂食状況を選択"
-            />
+          <div className={styles.consumptionButtons}>
+            <Button
+              onClick={() => handleUpdatePreviousConsumption(true)}
+              disabled={loading}
+              className={styles.consumedButton}
+            >
+              食べきった
+            </Button>
+            <Button
+              onClick={() => handleUpdatePreviousConsumption(false)}
+              disabled={loading}
+              variant="secondary"
+              className={styles.leftoverButton}
+            >
+              残した
+            </Button>
           </div>
-          <Button
-            onClick={handleUpdatePreviousConsumption}
-            disabled={!previousConsumption || loading}
-          >
-            記録する
-          </Button>
         </div>
       )}
 
